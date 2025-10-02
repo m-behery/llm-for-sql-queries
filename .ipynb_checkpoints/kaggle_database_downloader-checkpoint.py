@@ -5,7 +5,7 @@ import sys
 
 KAGGLE_HANDLE   = None
 DATASET_DIRPATH = None
-DB_EXT_KEYWORDS = ('sql', 'db')
+DB_EXT_KEYWORDS = ('sqlite', 'db')
 
 def is_db(filepath, ext_keywords=DB_EXT_KEYWORDS):
     if os.path.isfile(filepath):
