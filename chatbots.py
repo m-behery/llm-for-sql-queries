@@ -8,13 +8,13 @@ import re
 import json
 import requests
 from utils import Timer, read_task_template
-from constants import (DB_FILEPATH, LLM_TASK_TEMPLATE_FILEPATH, 
-                       OPENAI_CHAT_ENDPOINT, PROVIDER, MODEL_NAME,)
+from constants import ENVIRONMENT, FILEPATHS
 
 class OpenAIChatBot:
-    
-    TASK_TEMPLATE = read_task_template(LLM_TASK_TEMPLATE_FILEPATH)
-    CHAT_ENDPOINT = OPENAI_CHAT_ENDPOINT
+
+    PROVIDER = ENVIRONMENT.PROVIDER
+    TASK_TEMPLATE = read_task_template(FILEPATHS.LLM_TASK_TEMPLATE)
+    CHAT_ENDPOINT = ENVIRONMENT.OPENAI_CHAT_ENDPOINT
     
     def __init__(self, api_key, model, db_filepath):
         self._api_key   = api_key
@@ -77,7 +77,7 @@ class OpenAIChatBot:
         self._chat_history.append({'role': 'user', 'content': user_query})
         with Timer() as t:
             response_json = self._flush()
-        response_details = {'provider': PROVIDER}
+        response_details = {'provider': self.PROVIDER}
         if response_json:
             response_message = response_json['choices'][0]['message']['content']
             self._chat_history.append({'role': 'system', 'content': response_message})
@@ -133,7 +133,7 @@ class OpenAIChatBot:
             'model' : response_json['model'],
         })
         return details
-
+    
     @staticmethod
     def query_db(db_filepath: str, sqlite_query: str):
         try:
