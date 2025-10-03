@@ -57,9 +57,9 @@ llm-for-sql-queries/
 ├── sql_scripts/                     # Your SQL files go here
 │   └── (your-sql-scripts.sql)
 └── templates/                       # Web page files
-    ├── template.html               # Main page HTML
-    ├── style.css                   # Page styling
-    └── script.js                   # Frontend logic
+    ├── template.html                # Main page HTML
+    ├── style.css                    # Page styling
+    └── script.js                    # Frontend logic
 ```
 
 ## What each file does
