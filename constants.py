@@ -10,16 +10,17 @@ class ConstantNamespace(Namespace):
 
 FILEPATHS = ConstantNamespace(
     LLM_TASK_TEMPLATE = './templates/llm_task_template.md',
-    HTML_TEMPLATE = './templates/template.html',
-    CSS_TEMPLATE = './templates/style.css',
-    JS_TEMPLATE = './templates/script.js',
+    HTML_TEMPLATE     = './templates/template.html',
+    CSS_TEMPLATE      = './templates/style.css',
+    JS_TEMPLATE       = './templates/script.js',
+    MESSAGE_LOGS_DB   = './conversations.db',
 )
 
 ENVIRONMENT = ConstantNamespace(
     PROVIDER             = 'openai',
     OPENAI_API_KEY       = keyring.get_password('openai', 'default'),
     OPENAI_CHAT_ENDPOINT = 'https://api.openai.com/v1/chat/completions',
-    MODEL_NAME           = 'gpt-3.5-turbo',
+    MODEL_NAME           = 'gpt-4o-mini',
     DELAY_MS             = 2500, # To make sure we don't get blocked from the 2nd subsequent call to translate the SQL result to natural language
 )
 

@@ -7,21 +7,26 @@ import logging
 import re
 import json
 import requests
-from utils import Timer, read_template
-from constants import ENVIRONMENT
 from time import sleep
+import secrets
+from datetime import datetime
+
+from utils import Timer, read_template, extract_db_schema, query_db
+from constants import ENVIRONMENT, FILEPATHS
 
 class OpenAIChatBot:
-
+    
     PROVIDER = ENVIRONMENT.PROVIDER
     CHAT_ENDPOINT = ENVIRONMENT.OPENAI_CHAT_ENDPOINT
+    MESSAGE_LOGS_DB = FILEPATHS.MESSAGE_LOGS_DB
     
     def __init__(self, api_key, model, task_template_filepath, db_filepath):
+        self._session_id    = f'session_{secrets.token_urlsafe(32)}'
         self._api_key       = api_key
         self._model         = model
         self._task_template = read_template(task_template_filepath)
         self.db_filepath     = db_filepath
-
+    
     @property
     def task_template(self):
         return self._task_template
@@ -41,7 +46,7 @@ class OpenAIChatBot:
     @db_filepath.setter
     def db_filepath(self, value: str):
         self._db_filepath = value
-        self.db_schema   = self.extract_db_schema(value)
+        self.db_schema   = extract_db_schema(value)
     
     @property
     def db_schema(self):
@@ -53,6 +58,55 @@ class OpenAIChatBot:
         self._chat_history = [
             {'role': 'system', 'content': Template(self._task_template).substitute({'db_schema': value}) }
         ]
+        self.create_message_logs()
+        self._create_session()
+        self._update_session()
+
+    @classmethod
+    def create_message_logs(cls):
+        query_db(
+            cls.MESSAGE_LOGS_DB,
+            '''
+            CREATE TABLE IF NOT EXISTS sessions(
+                ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                session_id TEXT UNIQUE NOT NULL,
+                message_log TEXT,
+                started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                ended_at DATETIME
+            );
+            '''
+        )
+
+    def _create_session(self):
+        query_db(
+            self.MESSAGE_LOGS_DB,
+            '''
+            INSERT INTO sessions
+                (session_id) 
+            VALUES
+                (?);
+            ''',
+            (
+                self._session_id,
+            )
+        )
+
+    def _update_session(self):
+        query_db(
+            self.MESSAGE_LOGS_DB,
+            '''
+            UPDATE sessions 
+            SET
+                message_log = ?,
+                ended_at = CURRENT_TIMESTAMP
+            WHERE
+                session_id = ?;
+            ''',
+            (
+                json.dumps(self._chat_history, indent=4),
+                self._session_id
+            )
+        )
     
     @property
     def chat_history(self):
@@ -80,12 +134,14 @@ class OpenAIChatBot:
     
     def send(self, user_query):
         self._chat_history.append({'role': 'user', 'content': user_query})
+        self._update_session()
         with Timer() as t:
             response_json = self._flush()
         response_details = {'provider': self.PROVIDER}
         if response_json:
             response_message = response_json['choices'][0]['message']['content']
             self._chat_history.append({'role': 'system', 'content': response_message})
+            self._update_session()
             response_details = self._extract_response_details(response_json)
             response_details.update({
                 'latency_ms': t.elapsed,
@@ -94,15 +150,17 @@ class OpenAIChatBot:
             if 'SQL' in response_details:
                 sleep(ENVIRONMENT.DELAY_MS * 1e-3)
                 db_query = response_details['SQL']
-                rows     = self.query_db(self._db_filepath, db_query)
+                rows     = query_db(self._db_filepath, db_query)
                 rows_str = '\n'.join(map(str, rows))
                 message = f'SQL Query:\n{db_query}\n\nOutput:\n{rows_str}'
                 self._chat_history.append({'role': 'user', 'content': message})
+                self._update_session()
                 with Timer() as t:
                     response_json = self._flush()
                 if response_json:
                     response_message = response_json['choices'][0]['message']['content']
                     self._chat_history.append({'role': 'system', 'content': response_message})
+                    self._update_session()
                     response_b_details = self._extract_response_details(response_json)
                     if 'Answer' in response_b_details:
                         response_details['Answer'] = response_b_details['Answer']
@@ -139,26 +197,3 @@ class OpenAIChatBot:
             'model' : response_json['model'],
         })
         return details
-    
-    @staticmethod
-    def query_db(db_filepath: str, sqlite_query: str):
-        try:
-            conn = sqlite3.connect(db_filepath)
-            cursor = conn.cursor()
-            cursor.execute(sqlite_query)
-            rows = cursor.fetchall()
-        except:
-            logging.exception('Database Error.\nKindly check the error logs for traceback details.')
-        finally:
-            conn.close()
-        return rows
-    
-    @staticmethod
-    def extract_db_schema(db_filepath: str):
-        rows = __class__.query_db(
-            db_filepath,
-            'SELECT sql FROM sqlite_master WHERE type="table";'
-        )
-        create_table_cmds = list(zip(*rows))[0]
-        db_schema = '\n'.join(create_table_cmds)
-        return db_schema

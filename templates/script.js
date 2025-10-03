@@ -71,10 +71,9 @@ class ChatApp {
         // Handle different response scenarios
         if (responseDetails.status === 'error') {
             content += this.formatErrorResponse(responseDetails);
-        } else if (responseDetails.Answer || responseDetails.SQL) {
-            content += this.formatSuccessResponse(responseDetails);
         } else {
-            content += this.formatUnknownResponse(responseDetails);
+            // FIXED: Handle SQL and Answer independently - both can be present
+            content += this.formatSuccessResponse(responseDetails);
         }
         
         messageDiv.innerHTML = `
@@ -88,22 +87,32 @@ class ChatApp {
         
         // Apply syntax highlighting
         this.applySyntaxHighlighting();
+        
+        // Make sections collapsible
+        this.makeSectionsCollapsible(messageDiv);
     }
     
     formatSuccessResponse(responseDetails) {
         let content = '';
         
-        // Format Answer (Natural Language Response)
-        if (responseDetails.Answer) {
+        // FIXED: Handle both SQL and Answer independently
+        const hasAnswer = responseDetails.Answer && responseDetails.Answer.trim();
+        const hasSQL = responseDetails.SQL && responseDetails.SQL.trim();
+        
+        if (hasAnswer) {
             content += this.formatAnswer(responseDetails.Answer);
         }
         
-        // Format SQL Query
-        if (responseDetails.SQL) {
+        if (hasSQL) {
             content += this.formatSQL(responseDetails.SQL);
         }
         
-        // Format Metadata
+        // If neither Answer nor SQL, show raw response
+        if (!hasAnswer && !hasSQL) {
+            content += this.formatUnknownResponse(responseDetails);
+        }
+        
+        // Always show metadata
         content += this.formatResponseMetadata(responseDetails);
         
         return content;
@@ -112,10 +121,12 @@ class ChatApp {
     formatErrorResponse(responseDetails) {
         return `
             <div class="response-section">
-                <div class="section-header" style="background: #f8d7da; color: #721c24;">❌ Error</div>
+                <div class="section-header error-header">
+                    ❌ Error
+                </div>
                 <div class="section-content">
                     <div style="color: #dc3545;">
-                        <strong>Error:</strong> ${responseDetails.error || 'Unknown error occurred'}
+                        <strong>Error:</strong> ${this.escapeHtml(responseDetails.error || 'Unknown error occurred')}
                     </div>
                     ${this.formatResponseMetadata(responseDetails)}
                 </div>
@@ -126,23 +137,34 @@ class ChatApp {
     formatUnknownResponse(responseDetails) {
         return `
             <div class="response-section">
-                <div class="section-header">⚠️ Unknown Response Format</div>
+                <div class="section-header warning-header">
+                    ⚠️ Response Data
+                </div>
                 <div class="section-content">
                     <div class="json-data">
-                        ${this.formatJson(responseDetails)}
+                        <pre>${this.formatJson(responseDetails)}</pre>
                     </div>
-                    ${this.formatResponseMetadata(responseDetails)}
                 </div>
             </div>
         `;
     }
     
     formatAnswer(answer) {
-        // Convert markdown to HTML
-        const formattedAnswer = marked.parse(answer);
+        let formattedAnswer;
+        
+        // Use marked.js if available, otherwise escape HTML
+        if (typeof marked !== 'undefined') {
+            formattedAnswer = marked.parse(answer);
+        } else {
+            formattedAnswer = `<div class="plain-text">${this.escapeHtml(answer)}</div>`;
+            console.warn('Marked.js not loaded - using plain text formatting');
+        }
+        
         return `
             <div class="response-section">
-                <div class="section-header">📊 Answer</div>
+                <div class="section-header answer-header">
+                    📊 Answer
+                </div>
                 <div class="section-content">
                     <div class="markdown-content">${formattedAnswer}</div>
                 </div>
@@ -151,11 +173,12 @@ class ChatApp {
     }
     
     formatSQL(sql) {
-        // Format SQL with proper code blocks
         const escapedSQL = this.escapeHtml(sql);
         return `
             <div class="response-section">
-                <div class="section-header">🗃️ SQL Query</div>
+                <div class="section-header sql-header">
+                    🗃️ SQL Query
+                </div>
                 <div class="section-content">
                     <div class="sql-code-block">
                         <pre><code class="language-sql">${escapedSQL}</code></pre>
@@ -170,12 +193,14 @@ class ChatApp {
         
         return `
             <div class="response-section">
-                <div class="section-header">🔧 Response Details</div>
+                <div class="section-header metadata-header">
+                    🔧 Response Details
+                </div>
                 <div class="section-content">
-                    <div class="json-data">
-                        <strong>Provider:</strong> <span class="json-string">${provider || 'N/A'}</span><br>
-                        <strong>Model:</strong> <span class="json-string">${model || 'N/A'}</span><br>
-                        <strong>Status:</strong> <span class="${status === 'ok' ? 'status-ok' : 'status-error'}">${status || 'unknown'}</span>
+                    <div class="metadata-content">
+                        <strong>Provider:</strong> <span class="metadata-value">${provider || 'N/A'}</span><br>
+                        <strong>Model:</strong> <span class="metadata-value">${model || 'N/A'}</span><br>
+                        <strong>Status:</strong> <span class="status ${status === 'ok' ? 'status-ok' : 'status-error'}">${status || 'unknown'}</span>
                         ${token_usage ? this.formatTokenUsage(token_usage) : ''}
                     </div>
                 </div>
@@ -203,23 +228,8 @@ class ChatApp {
     }
     
     formatJson(obj) {
-        return JSON.stringify(obj, null, 2)
-            .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, 
-            function (match) {
-                let cls = 'json-number';
-                if (/^"/.test(match)) {
-                    if (/:$/.test(match)) {
-                        cls = 'json-key';
-                    } else {
-                        cls = 'json-string';
-                    }
-                } else if (/true|false/.test(match)) {
-                    cls = 'json-boolean';
-                } else if (/null/.test(match)) {
-                    cls = 'json-null';
-                }
-                return '<span class="' + cls + '">' + match + '</span>';
-            });
+        const jsonString = JSON.stringify(obj, null, 2);
+        return this.escapeHtml(jsonString);
     }
     
     applySyntaxHighlighting() {
@@ -227,6 +237,19 @@ class ChatApp {
         if (window.Prism) {
             Prism.highlightAllUnder(this.chatMessages);
         }
+    }
+    
+    makeSectionsCollapsible(messageDiv) {
+        const headers = messageDiv.querySelectorAll('.section-header');
+        headers.forEach(header => {
+            header.style.cursor = 'pointer';
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isCollapsed = content.style.display === 'none';
+                content.style.display = isCollapsed ? 'block' : 'none';
+                header.classList.toggle('collapsed', !isCollapsed);
+            });
+        });
     }
     
     showTypingIndicator() {
@@ -264,22 +287,17 @@ class ChatApp {
             return;
         }
         
-        // Prevent empty messages and very long messages
         if (message.length > 2000) {
             alert('Message too long. Please keep under 2000 characters.');
             return;
         }
         
-        // Add user message to chat
         this.addUserMessage(message);
-        
-        // Clear input and disable UI
         this.messageInput.value = '';
         this.messageInput.style.height = 'auto';
         this.sendButton.disabled = true;
         this.updateCharCount();
         
-        // Show typing indicator
         this.showTypingIndicator();
         
         try {
@@ -295,18 +313,8 @@ class ChatApp {
             this.hideTypingIndicator();
             
             if (response.ok) {
-                // EXPECTED RESPONSE FORMAT:
-                // {
-                //     "SQL": "<SQL Query>",
-                //     "Answer": "<Natural Language Response>",
-                //     "token_usage": { ... },
-                //     "provider": "openai",
-                //     "model": "gpt-3.5-turbo",
-                //     "status": "ok"
-                // }
                 this.addBotResponse(responseData);
             } else {
-                // Handle HTTP errors
                 this.addBotResponse({
                     status: 'error',
                     error: responseData.error || `HTTP ${response.status}: ${response.statusText}`,
@@ -347,13 +355,4 @@ class ChatApp {
 // Initialize the chat app when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     window.chatApp = new ChatApp();
-    
-    // Add collapsible section functionality
-    document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('section-header')) {
-            const content = e.target.nextElementSibling;
-            content.style.display = content.style.display === 'none' ? 'block' : 'none';
-            e.target.classList.toggle('collapsed');
-        }
-    });
 });

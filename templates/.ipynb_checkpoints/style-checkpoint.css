@@ -95,40 +95,73 @@ body {
     border-bottom-left-radius: 5px;
 }
 
-/* Response Details Styling */
-.response-details {
-    margin-top: 15px;
-    border: 1px solid #e9ecef;
+/* NEW: Response Sections Styling */
+.response-section {
+    margin: 15px 0;
+    border: 1px solid #e1e5e9;
     border-radius: 8px;
     overflow: hidden;
 }
 
-.response-section {
-    border-bottom: 1px solid #e9ecef;
-}
-
-.response-section:last-child {
-    border-bottom: none;
-}
-
 .section-header {
     background: #f8f9fa;
-    padding: 10px 15px;
+    padding: 12px 15px;
     font-weight: 600;
-    color: #495057;
+    border-bottom: 1px solid #e1e5e9;
     cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    user-select: none;
+    transition: background-color 0.2s;
+    display: block; /* Override flex from your original */
+    justify-content: normal; /* Reset */
 }
 
 .section-header:hover {
     background: #e9ecef;
 }
 
+.section-header.collapsed::after {
+    content: " ▶";
+    float: right;
+    font-size: 0.8em;
+}
+
+.section-header:not(.collapsed)::after {
+    content: " ▼";
+    float: right;
+    font-size: 0.8em;
+}
+
 .section-content {
     padding: 15px;
     background: white;
+}
+
+/* Specific section header types */
+.answer-header {
+    background: #d1ecf1;
+    border-left: 4px solid #17a2b8;
+}
+
+.sql-header {
+    background: #d4edda;
+    border-left: 4px solid #28a745;
+}
+
+.metadata-header {
+    background: #e2e3e5;
+    border-left: 4px solid #6c757d;
+}
+
+.error-header {
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+}
+
+.warning-header {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    color: #856404;
 }
 
 /* Markdown Content Styling */
@@ -159,6 +192,21 @@ body {
     margin: 15px 0;
     color: #6c757d;
     font-style: italic;
+}
+
+.markdown-content code {
+    background: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.markdown-content pre {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 10px 0;
 }
 
 /* SQL Code Block Styling */
@@ -209,6 +257,16 @@ body {
 
 .json-null {
     color: #6c757d;
+}
+
+/* NEW: Metadata Content */
+.metadata-content {
+    font-size: 0.9em;
+}
+
+.metadata-value {
+    color: #495057;
+    font-family: monospace;
 }
 
 /* Token Usage Styling */
@@ -406,5 +464,19 @@ button:disabled {
     
     .token-usage {
         grid-template-columns: 1fr;
+    }
+    
+    /* Mobile responsive for response sections */
+    .response-section {
+        margin: 10px 0;
+    }
+    
+    .section-header {
+        padding: 10px 12px;
+        font-size: 0.9em;
+    }
+    
+    .section-content {
+        padding: 12px;
     }
 }

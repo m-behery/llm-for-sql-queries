@@ -153,12 +153,23 @@ class Server(HTTPServer):
             with self:
                 super().serve_forever()
         except KeyboardInterrupt:
-            print('Keyboard interrupt received.\nServer shutdown successfully!')
+            print('Keyboard interrupt received.\nServer stopping...')
     
     def get_local_address(self):
-        hostname = socket.gethostname()
-        local_ip = socket.gethostbyname(hostname)
-        return f'http://{local_ip}:{self.server_address[1]}'
+        port = self.server_address[1]
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+                s.connect(('8.8.8.8', 80))
+                local_ip = s.getsockname()[0]
+                return f'http://{local_ip}:{port}'
+        except OSError:
+            hostname = socket.gethostname()
+            all_ips  = socket.getaddrinfo(hostname, None, socket.AF_INET)
+            for info in ip_infos:
+                local_ip = info[4][0]
+                if not local_ip.startswith('127.'):
+                    return f'http://{local_ip}:{port}'
+        return f'http://127.0.0.1:{port}'
     
     def get_public_address(self):
         https_tunnel = ngrok.connect(self.server_address[1], bind_tls=True)
