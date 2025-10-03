@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Chat Interface</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>🤖 AI Chat Assistant</h1>
+            <div class="status" id="status">🟢 Connected</div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                <div class="message-content">
+                    <strong>AI Assistant:</strong> Hello! I'm your AI assistant. How can I help you today?
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-input-container">
+            <div class="input-group">
+                <textarea id="messageInput" placeholder="Type your message here... (Press Enter to send, Shift+Enter for new line)" rows="3"></textarea>
+                <button onclick="sendMessage()" id="sendButton">Send</button>
+            </div>
+            <div class="chat-info">
+                <span id="charCount">0 characters</span>
+                <span class="hint">Enter to send • Shift+Enter for new line</span>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/script.js"></script>
+</body>
+</html>
