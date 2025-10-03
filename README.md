@@ -53,7 +53,7 @@ llm-for-sql-queries/
 ├── asap_database_creator.py         # Create DB from SQL scripts
 ├── kaggle_database_downloader.py    # Download datasets from Kaggle
 ├── conversations.db                 # Chat history storage
-├── notebook.ipynb                   # Jupyter notebook (if any)
+├── notebook.ipynb                   # Jupyter notebook demonstrating the bash script use cases for main.py, kaggle_database_downloader.py, and asap_database_creator.py
 ├── sql_scripts/                     # Your SQL files go here
 │   └── (your-sql-scripts.sql)
 └── templates/                       # Web page files
@@ -86,7 +86,7 @@ All other functionality is built using Python's built-in libraries, showcasing c
 
 ## Acknowledgements
 
-This project was developed as part of a technical assignment for the **Senior Machine Learning Engineer** position at **ASAP Systems for Barcloud**. 
+This project was developed as part of a technical assignment for the **Senior Machine Learning Engineer** position at **[ASAP Systems](https://barcloudweb.asapsystems.com/Login.aspx)**. 
 
 Special thanks to the interview team for the opportunity to demonstrate practical ML engineering skills through this real-world application of natural language processing for database interactions.
 
