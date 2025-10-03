@@ -3,27 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Chat Interface</title>
+    <title>LLM SQL Chat Interface</title>
     <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css">
 </head>
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <h1>🤖 AI Chat Assistant</h1>
+            <h1>🤖 SQL AI Assistant</h1>
             <div class="status" id="status">🟢 Connected</div>
         </div>
         
         <div class="chat-messages" id="chatMessages">
             <div class="message bot-message">
                 <div class="message-content">
-                    <strong>AI Assistant:</strong> Hello! I'm your AI assistant. How can I help you today?
+                    <strong>AI Assistant:</strong> Hello! I'm your SQL AI assistant. Ask me questions about your database and I'll generate SQL queries and explanations.
                 </div>
             </div>
         </div>
         
         <div class="chat-input-container">
             <div class="input-group">
-                <textarea id="messageInput" placeholder="Type your message here... (Press Enter to send, Shift+Enter for new line)" rows="3"></textarea>
+                <textarea id="messageInput" placeholder="Ask a question about your data... (Press Enter to send, Shift+Enter for new line)" rows="3"></textarea>
                 <button onclick="sendMessage()" id="sendButton">Send</button>
             </div>
             <div class="chat-info">

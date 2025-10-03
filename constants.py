@@ -9,18 +9,17 @@ class ConstantNamespace(Namespace):
         raise NotImplementedError('This is a constant namespace.')
 
 FILEPATHS = ConstantNamespace(
-    DATABASE = './data/aayman/asap-database-template/data.sqlite',
     LLM_TASK_TEMPLATE = './templates/llm_task_template.md',
     HTML_TEMPLATE = './templates/template.html',
-    CSS_TEMPLATE = './templates/template.css',
-    JS_TEMPLATE = './templates/template.js',
+    CSS_TEMPLATE = './templates/style.css',
+    JS_TEMPLATE = './templates/script.js',
 )
 
 ENVIRONMENT = ConstantNamespace(
     PROVIDER             = 'openai',
     OPENAI_API_KEY       = keyring.get_password('openai', 'default'),
     OPENAI_CHAT_ENDPOINT = 'https://api.openai.com/v1/chat/completions',
-    MODEL_NAME           = 'gpt-4o-mini',
+    MODEL_NAME           = 'gpt-3.5-turbo',
     DELAY_MS             = 2500, # To make sure we don't get blocked from the 2nd subsequent call to translate the SQL result to natural language
 )
 

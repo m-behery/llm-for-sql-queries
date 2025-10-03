@@ -16,8 +16,8 @@ body {
 
 .chat-container {
     width: 100%;
-    max-width: 900px;
-    height: 85vh;
+    max-width: 1000px;
+    height: 90vh;
     background: white;
     border-radius: 15px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -73,11 +73,11 @@ body {
 }
 
 .message-content {
-    max-width: 75%;
-    padding: 15px 20px;
-    border-radius: 18px;
+    max-width: 85%;
+    padding: 20px;
+    border-radius: 12px;
     font-size: 0.95em;
-    line-height: 1.5;
+    line-height: 1.6;
     word-wrap: break-word;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -93,6 +93,159 @@ body {
     color: #333;
     border: 1px solid #e9ecef;
     border-bottom-left-radius: 5px;
+}
+
+/* Response Details Styling */
+.response-details {
+    margin-top: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.response-section {
+    border-bottom: 1px solid #e9ecef;
+}
+
+.response-section:last-child {
+    border-bottom: none;
+}
+
+.section-header {
+    background: #f8f9fa;
+    padding: 10px 15px;
+    font-weight: 600;
+    color: #495057;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header:hover {
+    background: #e9ecef;
+}
+
+.section-content {
+    padding: 15px;
+    background: white;
+}
+
+/* Markdown Content Styling */
+.markdown-content {
+    line-height: 1.6;
+}
+
+.markdown-content h1, .markdown-content h2, .markdown-content h3 {
+    margin: 15px 0 10px 0;
+    color: #2c3e50;
+}
+
+.markdown-content p {
+    margin-bottom: 10px;
+}
+
+.markdown-content ul, .markdown-content ol {
+    margin: 10px 0 10px 20px;
+}
+
+.markdown-content li {
+    margin-bottom: 5px;
+}
+
+.markdown-content blockquote {
+    border-left: 4px solid #007bff;
+    padding-left: 15px;
+    margin: 15px 0;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* SQL Code Block Styling */
+.sql-code-block {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 15px;
+    margin: 10px 0;
+    overflow-x: auto;
+}
+
+.sql-code-block pre {
+    margin: 0;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+/* JSON Data Styling */
+.json-data {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 15px;
+    margin: 10px 0;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.85em;
+    overflow-x: auto;
+}
+
+.json-key {
+    color: #e83e8c;
+    font-weight: bold;
+}
+
+.json-string {
+    color: #28a745;
+}
+
+.json-number {
+    color: #007bff;
+}
+
+.json-boolean {
+    color: #fd7e14;
+}
+
+.json-null {
+    color: #6c757d;
+}
+
+/* Token Usage Styling */
+.token-usage {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.token-item {
+    text-align: center;
+    padding: 8px;
+    background: #e9ecef;
+    border-radius: 6px;
+    font-size: 0.85em;
+}
+
+.token-value {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.token-label {
+    color: #6c757d;
+    font-size: 0.8em;
+}
+
+/* Status Indicators */
+.status-ok {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-error {
+    color: #dc3545;
+    font-weight: bold;
 }
 
 .chat-input-container {
@@ -238,7 +391,7 @@ button:disabled {
     }
     
     .message-content {
-        max-width: 85%;
+        max-width: 95%;
     }
     
     .input-group {
@@ -249,5 +402,9 @@ button:disabled {
     button {
         width: 100%;
         height: 50px;
+    }
+    
+    .token-usage {
+        grid-template-columns: 1fr;
     }
 }

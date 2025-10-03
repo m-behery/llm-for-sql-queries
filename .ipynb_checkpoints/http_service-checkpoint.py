@@ -63,6 +63,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 user_query = json_payload['message']
             else:
                 self._serve_json(400, {'error': 'The JSON payload is missing the "message" field'})
+                return
             if self._chatbot:
                 openai_response_details = self._chatbot.send(user_query)
                 self._serve_json(200, openai_response_details)
@@ -147,12 +148,12 @@ class Server(HTTPServer):
     def serve_forever(self, public=False):
         print(f'Local Address:\t{self.get_local_address()}')
         if public:
-            print(f'Public Address:\t{self.get_public_address()}')
+            print(f'Public Address:\t{self.get_public_address()}', end='\n\n')
         try:
             with self:
                 super().serve_forever()
         except KeyboardInterrupt:
-            print('Server shutdown successfully!')
+            print('Keyboard interrupt received.\nServer shutdown successfully!')
     
     def get_local_address(self):
         hostname = socket.gethostname()
