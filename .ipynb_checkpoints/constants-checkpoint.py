@@ -21,7 +21,7 @@ ENVIRONMENT = ConstantNamespace(
     OPENAI_API_KEY       = keyring.get_password('openai', 'default'),
     OPENAI_CHAT_ENDPOINT = 'https://api.openai.com/v1/chat/completions',
     MODEL_NAME           = 'gpt-4o-mini',
-    DELAY_MS             = 0, # To make sure we don't get blocked from the 2nd subsequent call to translate the SQL result to natural language
+    DELAY_MS             = 2500, # To make sure we don't get blocked from the 2nd subsequent call to translate the SQL result to natural language
 )
 
 CONNECTION_PARAMS = ConstantNamespace(
