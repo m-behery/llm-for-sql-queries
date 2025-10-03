@@ -189,7 +189,7 @@ class ChatApp {
     }
     
     formatResponseMetadata(responseDetails) {
-        const { token_usage, provider, model, status } = responseDetails;
+        const { token_usage, provider, model, status, latency_ms } = responseDetails;
         
         return `
             <div class="response-section">
@@ -200,7 +200,8 @@ class ChatApp {
                     <div class="metadata-content">
                         <strong>Provider:</strong> <span class="metadata-value">${provider || 'N/A'}</span><br>
                         <strong>Model:</strong> <span class="metadata-value">${model || 'N/A'}</span><br>
-                        <strong>Status:</strong> <span class="status ${status === 'ok' ? 'status-ok' : 'status-error'}">${status || 'unknown'}</span>
+                        <strong>Status:</strong> <span class="status ${status === 'ok' ? 'status-ok' : 'status-error'}">${status || 'unknown'}</span><br>
+                        ${latency_ms !== undefined ? `<strong>Latency:</strong> <span class="metadata-value">${latency_ms} ms</span><br>` : ''}
                         ${token_usage ? this.formatTokenUsage(token_usage) : ''}
                     </div>
                 </div>
