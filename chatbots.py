@@ -8,18 +8,23 @@ import re
 import json
 import requests
 from utils import Timer, read_task_template
-from constants import ENVIRONMENT, FILEPATHS
+from constants import ENVIRONMENT
+from time import sleep
 
 class OpenAIChatBot:
 
     PROVIDER = ENVIRONMENT.PROVIDER
-    TASK_TEMPLATE = read_task_template(FILEPATHS.LLM_TASK_TEMPLATE)
     CHAT_ENDPOINT = ENVIRONMENT.OPENAI_CHAT_ENDPOINT
     
-    def __init__(self, api_key, model, db_filepath):
-        self._api_key   = api_key
-        self._model     = model
-        self.db_filepath = db_filepath
+    def __init__(self, api_key, model, task_template_filepath, db_filepath):
+        self._api_key       = api_key
+        self._model         = model
+        self._task_template = read_task_template(task_template_filepath)
+        self.db_filepath     = db_filepath
+
+    @property
+    def task_template(self):
+        return self._task_template
     
     @property
     def client(self):
@@ -46,7 +51,7 @@ class OpenAIChatBot:
     def db_schema(self, value: str):
         self._db_schema = value
         self._chat_history = [
-            {'role': 'system', 'content': Template(self.TASK_TEMPLATE).substitute({'db_schema': value}) }
+            {'role': 'system', 'content': Template(self._task_template).substitute({'db_schema': value}) }
         ]
     
     @property
@@ -87,6 +92,7 @@ class OpenAIChatBot:
                 'status': 'ok',
             })
             if 'SQL' in response_details:
+                sleep(ENVIRONMENT.DELAY_MS * 1e-3)
                 db_query = response_details['SQL']
                 rows     = self.query_db(self._db_filepath, db_query)
                 rows_str = '\n'.join(map(str, rows))
@@ -106,7 +112,7 @@ class OpenAIChatBot:
                             'completion_tokens' : response_details['token_usage']['completion_tokens'] + response_b_details['token_usage']['completion_tokens'],
                             'total_tokens'      : response_details['token_usage']['total_tokens'] + response_b_details['token_usage']['total_tokens'],
                         },
-                        'latency_ms': response_details['latency_ms'] + t.elapsed,
+                        'latency_ms': response_details['latency_ms'] + ENVIRONMENT.DELAY_MS + t.elapsed,
                         'status': 'ok',
                     })
                 else:

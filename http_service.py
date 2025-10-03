@@ -3,6 +3,9 @@ from string import Template
 import logging
 import json
 import requests
+import socket
+
+from pyngrok import ngrok  # BONUS -- for remote deployment via an HTTP tunnel with a TLS layer
 
 class RequestHandler(BaseHTTPRequestHandler):
     
@@ -66,3 +69,22 @@ class Server(HTTPServer):
     def __init__(self, server_address, RequestHandlerClass, chatbot):
         super().__init__(server_address, RequestHandlerClass)
         RequestHandlerClass.set_chatbot(chatbot)
+
+    def serve_forever(self, public=False):
+        print(f'Local Address:\t{self.get_local_address()}')
+        if public:
+            print(f'Public Address:\t{self.get_public_address()}')
+        try:
+            super().serve_forever()
+        except KeyboardInterrupt:
+            self.shutdown()
+            print('Server shutdown successfully!')
+    
+    def get_local_address(self):
+        hostname = socket.gethostname()
+        local_ip = socket.gethostbyname(hostname)
+        return f'http://{local_ip}:{self.server_address[1]}'
+    
+    def get_public_address(self):
+        https_tunnel = ngrok.connect(self.server_address[1], bind_tls=True)
+        return https_tunnel.public_url
