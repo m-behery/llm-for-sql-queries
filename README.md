@@ -71,7 +71,7 @@ llm-for-sql-queries/
 - **`utils.py`** - Helper functions for databases and timing
 - **`asap_database_creator.py`** - Builds new databases from SQL files
 - **`kaggle_database_downloader.py`** - Gets datasets from Kaggle
-- **`templates/`** - All the web page files (HTML, CSS, JavaScript)
+- **`templates/`** - All the web page files (HTML, CSS, JavaScript) in addition to the LLM task prompt template.
 
 The app will create a `data/` folder automatically for your databases.
 

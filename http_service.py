@@ -5,8 +5,6 @@ import json
 import requests
 import socket
 
-from pyngrok import ngrok  # BONUS -- for remote deployment via an HTTP tunnel with a TLS layer
-
 from utils import read_template
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -298,7 +296,7 @@ class Server(HTTPServer):
                     return f'http://{local_ip}:{port}'
         return f'http://127.0.0.1:{port}'
     
-    def get_public_address(self):
+    def get_public_address(self):  # OPTIONAL -- for publicly accessible endpoints via an HTTP tunnel with a TLS layer
         """
         Create and get public ngrok tunnel address.
         
@@ -309,5 +307,7 @@ class Server(HTTPServer):
             Requires pyngrok to be installed
             Creates a TLS-enabled tunnel for secure public access
         """
+        from pyngrok import ngrok
+        
         https_tunnel = ngrok.connect(self.server_address[1], bind_tls=True)
         return https_tunnel.public_url

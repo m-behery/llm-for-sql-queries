@@ -115,5 +115,5 @@ Example:
 CONNECTION_PARAMS = ConstantNamespace(
     HOST = '0.0.0.0',
     PORT = 8000,
-    PUBLIC = True,  # BONUS -- for remote deployment via an HTTP tunnel with a TLS layer
+    PUBLIC = True,  # OPTIONAL -- for publicly accessible endpoints via an HTTP tunnel with a TLS layer
 )
