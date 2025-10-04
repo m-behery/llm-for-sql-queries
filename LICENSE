@@ -15,6 +15,7 @@ This license applies only to the following files developed by the author:
 
 - main.py
 - chatbots.py
+- /templates/llm_task_template.md
 - conversations.db
 - http_service.py
 - constants.py
@@ -26,7 +27,7 @@ Exclusions
 
 This license does not extend to:
 
-- All the frontend files in the templates/ directory, they were created using DeepSeek v3.2 which lies in the gray area of intellectual properties
+- The frontend files in the templates/ directory (i.e. template.html, style.css, script.js), they were created using DeepSeek v3.2 which lies in the gray area of intellectual properties
 - Any SQL files in the sql_scripts/ directory
 - Any datasets downloaded via the Kaggle integration
 - Any database files created or downloaded using this software with the exception of conversations.db
