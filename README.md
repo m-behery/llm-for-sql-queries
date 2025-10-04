@@ -19,10 +19,10 @@ A simple web app that lets you chat with your SQL database using natural languag
 2. **Get a database ready:**
    ```bash
    # Option A: Create from SQL script
-   python asap_database_creator.py my_db sql_scripts/your_script.sql
+   python database_creator.py username/dataset-name sql_scripts/your_script.sql
    
    # Option B: Download from Kaggle  
-   python kaggle_database_downloader.py username/dataset-name
+   python kaggle_dataset_downloader.py username/dataset-name
    ```
 
 3. **Run the app:**
