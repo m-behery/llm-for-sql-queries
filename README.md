@@ -49,12 +49,12 @@ llm-for-sql-queries/
 ├── chatbots.py                      # AI chat logic
 ├── http_service.py                  # Web server
 ├── constants.py                     # Settings and config
-├── utils.py                         # Database utilities
-├── asap_database_creator.py         # Create DB from SQL scripts
+├── utils.py                         # Helper functions and classes
+├── asap_database_creator.py         # Create database from SQL scripts
 ├── kaggle_database_downloader.py    # Download datasets from Kaggle
-├── conversations.db                 # Chat history storage
+├── conversations.db                 # Database for chat history storage in different sessions
 ├── notebook.ipynb                   # Jupyter notebook demonstrating the bash script use cases for main.py, kaggle_database_downloader.py, and asap_database_creator.py
-├── sql_scripts/                     # Your SQL files go here
+├── sql_scripts/                     # Your SQL database creation scripts go here
 │   └── (your-sql-scripts.sql)
 └── templates/                       # Web page files
     ├── template.html                # Main page HTML
