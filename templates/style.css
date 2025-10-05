@@ -59,6 +59,53 @@ body {
     gap: 15px;
 }
 
+.session-info {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.session-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.session-id {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    background: #fff8e1;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    word-break: break-all;
+    flex: 1;
+    border: 1px solid #ffeaa7;
+}
+
+.copy-session-btn {
+    background: #fff8e1;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 0.8em;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    min-width: auto;
+    height: auto;
+    font-family: inherit;
+}
+
+.copy-session-btn:hover {
+    background: #ffeaa7;
+    transform: translateY(-1px);
+}
+
 .message {
     display: flex;
     animation: fadeIn 0.3s ease-in;
@@ -95,7 +142,7 @@ body {
     border-bottom-left-radius: 5px;
 }
 
-/* NEW: Response Sections Styling */
+/* Response Sections Styling */
 .response-section {
     margin: 15px 0;
     border: 1px solid #e1e5e9;
@@ -259,7 +306,7 @@ body {
     color: #6c757d;
 }
 
-/* NEW: Metadata Content */
+/* Metadata Content */
 .metadata-content {
     font-size: 0.9em;
 }
@@ -478,5 +525,25 @@ button:disabled {
     
     .section-content {
         padding: 12px;
+    }
+    
+    /* Mobile responsive for session ID */
+    .session-info {
+        padding: 12px 15px;
+        margin-bottom: 8px;
+    }
+    
+    .session-content {
+        gap: 8px;
+    }
+    
+    .session-id {
+        font-size: 0.8em;
+        padding: 4px 8px;
+    }
+    
+    .copy-session-btn {
+        padding: 4px 8px;
+        font-size: 0.75em;
     }
 }

@@ -50,6 +50,10 @@ class OpenAIChatBot:
         self.db_filepath     = db_filepath
     
     @property
+    def session_id(self):
+        return self._session_id
+    
+    @property
     def task_template(self):
         """Get the task template content with system instructions."""
         return self._task_template
@@ -217,6 +221,7 @@ class OpenAIChatBot:
             
         Returns:
             dict: Response details containing:
+                - session_id (str): Session ID
                 - provider (str): AI provider name
                 - status (str): 'ok' or 'error'
                 - model (str): Model used for response
@@ -233,12 +238,17 @@ class OpenAIChatBot:
         self._update_session()
         with Timer() as t:
             response_json = self._flush()
-        response_details = {'provider': self.PROVIDER}
+        response_details = {
+            'session_id': self._session_id,
+            'provider': self.PROVIDER,
+        }
         if response_json:
             response_message = response_json['choices'][0]['message']['content']
             self._chat_history.append({'role': 'system', 'content': response_message})
             self._update_session()
-            response_details = self._extract_response_details(response_json)
+            response_details.update(
+                self._extract_response_details(response_json)
+            )
             response_details.update({
                 'latency_ms': t.elapsed,
                 'status': 'ok',

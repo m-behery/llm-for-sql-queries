@@ -5,6 +5,7 @@ class ChatApp {
         this.sendButton = document.getElementById('sendButton');
         this.charCount = document.getElementById('charCount');
         this.status = document.getElementById('status');
+        this.sessionDisplayed = false;
         
         this.initEventListeners();
         this.messageInput.focus();
@@ -48,6 +49,86 @@ class ChatApp {
         this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 120) + 'px';
     }
     
+    displaySessionId(sessionId) {
+        // Only display session ID once per session
+        if (this.sessionDisplayed) return;
+        
+        const sessionDiv = document.createElement('div');
+        sessionDiv.className = 'session-info';
+        
+        sessionDiv.innerHTML = `
+            <div class="session-content">
+                <strong>Session ID:</strong> 
+                <span class="session-id" title="${sessionId}">${sessionId}</span>
+                <button class="copy-session-btn" title="Copy Session ID">
+                    📋
+                </button>
+            </div>
+        `;
+        
+        // Insert at the top of chat messages
+        this.chatMessages.insertBefore(sessionDiv, this.chatMessages.firstChild);
+        this.sessionDisplayed = true;
+        
+        // Add copy functionality with better error handling
+        const copyBtn = sessionDiv.querySelector('.copy-session-btn');
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(sessionId);
+                
+                // Visual feedback
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✅';
+                copyBtn.style.background = '#d4edda';
+                copyBtn.style.borderColor = '#c3e6cb';
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = '#fff8e1';
+                    copyBtn.style.borderColor = '#ffeaa7';
+                }, 2000);
+                
+            } catch (err) {
+                console.error('Failed to copy session ID:', err);
+                
+                // Fallback method for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = sessionId;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    
+                    // Visual feedback for fallback method
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = '✅';
+                    copyBtn.style.background = '#d4edda';
+                    copyBtn.style.borderColor = '#c3e6cb';
+                    
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                        copyBtn.style.background = '#fff8e1';
+                        copyBtn.style.borderColor = '#ffeaa7';
+                    }, 2000);
+                    
+                } catch (fallbackErr) {
+                    console.error('Fallback copy method failed:', fallbackErr);
+                    copyBtn.textContent = '❌';
+                    setTimeout(() => {
+                        copyBtn.textContent = '📋';
+                    }, 2000);
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        });
+    }
+    
     addUserMessage(message) {
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message user-message';
@@ -67,6 +148,11 @@ class ChatApp {
         messageDiv.className = 'message bot-message';
         
         let content = '<strong>AI Assistant:</strong><br>';
+        
+        // Display session ID if present in response (usually first response)
+        if (responseDetails.session_id && !this.sessionDisplayed) {
+            this.displaySessionId(responseDetails.session_id);
+        }
         
         // Handle different response scenarios
         if (responseDetails.status === 'error') {
