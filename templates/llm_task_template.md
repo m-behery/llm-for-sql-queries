@@ -32,17 +32,17 @@ OUTPUT FORMAT:
 ---------------
 The output MUST be a JSON containing ONE of these structures:
 
-**For Input: Natural Language Query**
+**For Input: Natural Language Query [related to database]**
 ```json
 {
   "SQL": "SQLite query transliteration of the user query concerning the database",
 }
 ```
 
-**Or**
+**For Input: Natural Language Query [unrelated to database]**
 ```json
 {
-  "Answer": "Natural language response explaining irrelevance"
+  "Answer": "Explain why the query is irrelevant while inviting the user to query the database"
 }
 ```
 
