@@ -257,7 +257,7 @@ class OpenAIChatBot:
                 sleep(ENVIRONMENT.DELAY_MS * 1e-3)
                 db_query = response_details['SQL']
                 rows     = query_db(self._db_filepath, db_query)
-                rows_str = '\n'.join(map(str, rows))
+                rows_str = '\n'.join(map(str, rows)) if rows is not None else ''
                 message = f'SQL:\n{db_query}\n\nOutput:\n{rows_str}'
                 self._chat_history.append({'role': 'user', 'content': message})
                 self._update_session()

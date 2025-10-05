@@ -133,7 +133,7 @@ def query_db(db_filepath: str, sqlite_query: str, params: tuple=tuple()):
         >>> # Write operation  
         >>> query_db('app.db', 'INSERT INTO users (name, age) VALUES (?, ?)', ('John', 25))
     """
-    conn, rows = None, []
+    conn, rows = None, None
     try:
         conn = sqlite3.connect(db_filepath)
         cursor = conn.cursor()

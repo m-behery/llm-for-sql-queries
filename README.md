@@ -53,7 +53,7 @@ llm-for-sql-queries/
 ├── database_creator.py              # Create database from SQL scripts
 ├── kaggle_dataset_downloader.py     # Download datasets from Kaggle
 ├── conversations.db                 # Database for chat history storage in different sessions
-├── notebook.ipynb                   # Jupyter notebook demonstrating the bash script use cases for main.py, kaggle_database_downloader.py, and asap_database_creator.py
+├── notebook.ipynb                   # Jupyter notebook demonstrating the bash script use cases for main.py, kaggle_database_downloader.py, and database_creator.py
 ├── sql_scripts/                     # Your SQL database creation scripts go here
 │   └── (your-sql-scripts.sql)
 └── templates/                       # Web page files
@@ -73,7 +73,7 @@ llm-for-sql-queries/
 - **`kaggle_dataset_downloader.py`** - Gets datasets from Kaggle
 - **`templates/`** - All the web page files (HTML, CSS, JavaScript) in addition to the LLM task prompt template.
 
-The app will create a `data/` folder automatically for your databases.
+The app will create a `data/` folder automatically for your datasets/databases.
 
 ## Dependencies
 
